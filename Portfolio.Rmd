@@ -28,7 +28,6 @@ combined <- rbind(MB, FS)
 head(combined)
 ```
 
-
 You can also embed plots, for example:
 
 ```{r pressure, echo=FALSE}
