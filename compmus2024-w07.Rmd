@@ -8,13 +8,13 @@ You can download the raw source code for these lecture notes [here](compmus2024-
 
 ### Wednesday · 15 February · Lecture
 
-- Course intro and demo portfolio (10 min)
-- Lecture: What is computational musicology? (15 min)
-- Breakout 1: Spotify features (15 min)
-- Plenary Discussion: Breakout findings (10 min)
-- Lecture: What is a spectrogram? (15 min)
-- Demo: Sonic Visualiser (10 min)
-- Lecture: What is good analytical design? (15 min)
+-   Course intro and demo portfolio (10 min)
+-   Lecture: What is computational musicology? (15 min)
+-   Breakout 1: Spotify features (15 min)
+-   Plenary Discussion: Breakout findings (10 min)
+-   Lecture: What is a spectrogram? (15 min)
+-   Demo: Sonic Visualiser (10 min)
+-   Lecture: What is good analytical design? (15 min)
 
 If you want some distraction *after* the lecture, have a look at the [Sources of Good Data Visualisations](https://canvas.uva.nl/courses/44721/pages/sources-of-sometimes-good-data-visualisations?module_item_id=1913347) on Canvas.
 
@@ -22,13 +22,13 @@ If you want some distraction *after* the lecture, have a look at the [Sources of
 
 If you have time before this lab, [try to connect your portfolio to Spotify](https://canvas.uva.nl/courses/44721/pages/connecting-your-portfolio-to-spotify?module_item_id=1913386). If you get stuck, your TA will help you during the lab session.
 
-- Introductions (5 min)
-- Review: RStudio, R Markdown, and Spotify (15 min)
-- Breakout 2: 'Let It Go' (20 min)
-- Plenary Discussion: Breakout findings (5 min)
-- Demo: ggplot (15 min)
-- Breakout 3: Digster decade comparison (20 min)
-- Plenary Discussion: Breakout findings (10 min)
+-   Introductions (5 min)
+-   Review: RStudio, R Markdown, and Spotify (15 min)
+-   Breakout 2: 'Let It Go' (20 min)
+-   Plenary Discussion: Breakout findings (5 min)
+-   Demo: ggplot (15 min)
+-   Breakout 3: Digster decade comparison (20 min)
+-   Plenary Discussion: Breakout findings (10 min)
 
 ## Breakout 1: Spotify Features
 
@@ -36,11 +36,11 @@ Visit the [Spotify feature documentation](https://developer.spotify.com/document
 
 For each feature, discuss with your group which of the four 'musical moments' you think Spotify uses to compute it:
 
-  1. Pitch
-  2. Volume
-  3. Timbre
-  4. Duration/Time
-  
+1.  Pitch
+2.  Volume
+3.  Timbre
+4.  Duration/Time
+
 Some of them are obvious, and some of them are very much not!
 
 Be prepared to discuss your conclusions with the class at the end of the breakout.
@@ -58,7 +58,7 @@ library(tidyverse)
 library(spotifyr)
 ```
 
-The `spotifyr` library allows you to load information by track, album, artist, or playlist. I very strongly recommend using playlists. 
+The `spotifyr` library allows you to load information by track, album, artist, or playlist. I very strongly recommend using playlists.
 
 All of the functions rely on Spotify URIs. You can copy them from spotify, but you need to delete the first parts (e.g., `spotify:track:`, `spotify:album:`, `spotify:artist:`, or `spotify:playlist:`) and keep only the alphanumeric nonsense at the end. Note also that `get_playlist_audio_features()` requires an extra blank string at the beginning, for historical reasons.
 
@@ -95,10 +95,9 @@ ecm |>
 
 Open the [Disney Hits](https://open.spotify.com/playlist/37i9dQZF1DX8C9xQcOrE6T?si=brcY2gRMTEeLA73yteEw_A) playlist on Spotify and load it into R, like the demo examples above. Look at the data, starting in spreadsheet form, and compare 'Let It Go' and 'We Don't Talk about Bruno' to the other tracks on the playlist. Is there anything unusual about them? Be prepared to discuss your findings with the group.
 
-If you have time, try identifying outliers on the playlist -- tracks that have extreme and unusual values on one of the Spotify features -- and listen to them. Do you agree with Spotify's assessment? 
+If you have time, try identifying outliers on the playlist -- tracks that have extreme and unusual values on one of the Spotify features -- and listen to them. Do you agree with Spotify's assessment?
 
 Can you also agree on which track on the playlist is the most typical Disney hit? If so, how did you make your decision? If not, why does your group disagree?
-
 
 ## Breakout 3: Digster Decade Comparisions
 
@@ -153,12 +152,12 @@ grammy |> ggplot(aes(x = valence, y = energy)) + geom_jitter() + geom_smooth()
 
 Good visualisations, of course, have many more components. Remember Tufte's six design principles (2006):
 
-  1. Show comparisons, contrasts, differences.
-  2. Show causality, mechanism, explanation, systematic structure.
-  3. Show multivariate data; that is, show more than 1 or 2 variables.
-  4. Completely integrate words, numbers, images, diagrams.
-  5. Thoroughly describe the evidence. Provide a detailed title, indicate the authors and sponsors, document the data sources, show complete measurement scales, point out relevant issues.
-  6. Analytical presentations ultimately stand or fall on the quality, relevance, and integrity of their content.
+1.  Show comparisons, contrasts, differences.
+2.  Show causality, mechanism, explanation, systematic structure.
+3.  Show multivariate data; that is, show more than 1 or 2 variables.
+4.  Completely integrate words, numbers, images, diagrams.
+5.  Thoroughly describe the evidence. Provide a detailed title, indicate the authors and sponsors, document the data sources, show complete measurement scales, point out relevant issues.
+6.  Analytical presentations ultimately stand or fall on the quality, relevance, and integrity of their content.
 
 ```{r}
 awards |>                    # Start with awards.
@@ -225,10 +224,10 @@ awards |>                    # Start with awards.
 
 Open the user profile for [QmusicNL](https://open.spotify.com/user/qmusicnl?si=7fcc18670839460d) and look at their public playlists. You will see four decade-based playlists:
 
-  - Q-top 500 van de 80s,
-  - Q-top 500 van de 90s,
-  - Q-top 500 van de 00s, and
-  - Q-top 500 van de 10s.
+-   Q-top 500 van de 80s,
+-   Q-top 500 van de 90s,
+-   Q-top 500 van de 00s, and
+-   Q-top 500 van de 10s.
 
 Choose any two decades you want to compare, and make the best visualisation you can that shows the differences between the two decades. Also choose a member of your group who will be prepared to share their screen at the end of the breakout and show off your results. But above all, *help each other* so that every member of your group leaves with some working code.
 
