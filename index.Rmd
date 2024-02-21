@@ -13,11 +13,11 @@ library(usethis)
 library(spotifyr)
 ```
 
-## Column {data-width="650"}
+## Column {data-width="500"}
 
-### Chart A
+### Made Buble the genre more danceable? 
 
-```{r}
+```{r, results=FALSE}
 jazz <- get_playlist_audio_features("", "6W4qNJv2ViwlCElxMIK24H")
 MB <- get_playlist_audio_features("", "37i9dQZF1DZ06evO0WqnZe")
 FS <- get_playlist_audio_features("", "37i9dQZF1DZ06evO102dNu")
