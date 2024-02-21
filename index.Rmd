@@ -8,6 +8,9 @@ output:
 
 ```{r setup, include=FALSE}
 library(flexdashboard)
+library(tidyverse)
+library(usethis)
+library(spotifyr)
 ```
 
 ## Column {data-width="650"}
@@ -15,9 +18,21 @@ library(flexdashboard)
 ### Chart A
 
 ```{r}
+jazz <- get_playlist_audio_features("", "6W4qNJv2ViwlCElxMIK24H")
+MB <- get_playlist_audio_features("", "37i9dQZF1DZ06evO0WqnZe")
+FS <- get_playlist_audio_features("", "37i9dQZF1DZ06evO102dNu")
+combined <- rbind(MB, FS)
+head(combined)
 
+ggplot(combined, aes(x=valence, y=danceability, color=playlist_name)) +
+  geom_point(alpha=0.7) +
+  expand_limits(x=0, y=0) +
+  labs(x="Valence", y="Danceability") +
+  theme(legend.position=c(0.8, 0.2))
 ```
 
+***
+Test text
 
 ### Chart B
 
