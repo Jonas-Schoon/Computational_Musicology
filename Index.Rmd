@@ -1,5 +1,5 @@
 ---
-title: "Untitled"
+title: "Jazz through the years"
 author: "Jonas Schoonhoven"
 output: 
   flexdashboard::flex_dashboard:
@@ -18,13 +18,13 @@ library(flexdashboard)
 
 ```
 
-## Column {data-width="350"}
 
 ### Chart B
 
 ```{r}
 
 ```
+
 
 ### Chart C
 
