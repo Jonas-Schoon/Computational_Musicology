@@ -2,7 +2,7 @@
 knitr::opts_chunk$set(cache = TRUE)
 ```
 
-You can download the raw source code for these lecture notes [here](compmus2024-w07.Rmd).
+You can download the raw source code for these lecture notes [here](compmus2024-w07.Rmd). 
 
 ## Course Meeting Plan
 
