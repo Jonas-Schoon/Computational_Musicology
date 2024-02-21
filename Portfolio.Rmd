@@ -1,8 +1,10 @@
 ---
-title: "CM"
+title: "Computational Musicology"
 author: "Jonas Schoonhoven"
 date: "`r Sys.Date()`"
-output: html_document
+output: 
+  flexdashboard::flex_dashboard:
+      stroyboard: true
 ---
 
 ```{r setup, include=FALSE}
