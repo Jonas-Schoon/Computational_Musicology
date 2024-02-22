@@ -55,7 +55,7 @@ buble <-
   unnest(segments) |>
   select(start, duration, pitches)
 
-dtw_plot <- compmus_long_distance(
+compmus_long_distance(
   sinatra |> mutate(pitches = map(pitches, compmus_normalise, "chebyshev")),
   buble |> mutate(pitches = map(pitches, compmus_normalise, "chebyshev")),
   feature = pitches,
@@ -75,8 +75,6 @@ dtw_plot <- compmus_long_distance(
   labs(x = "Sinatra", y = "Buble", title = "Fly me to the moon") +
   theme_minimal() +
   scale_fill_viridis_c(guide = NULL)
-
-ggplotly(dtw_plot)
 ```
 
 
