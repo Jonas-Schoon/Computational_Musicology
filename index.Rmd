@@ -15,8 +15,6 @@ library(compmus)
 library(plotly)
 ```
 
-## Column {data-width="500"}
-
 ### Made Buble the genre more danceable? 
 
 ```{r scatterplot}
