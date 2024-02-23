@@ -48,7 +48,7 @@ I have made a scatterplot with on the x axis all the valence values of the track
 
 I think this plot is interesting because it is actually in line with what I thought about the artist before making the plot. In the plot it can be seen that Buble in general scores higher in the danceability scores than Sinatra. My thoughts about the bibliograhpy of Buble were that he has a lot covers from Sinatra and next to those covers he has more hip hop styled songs. I think that these thoughts are well represented in this plot.
 
-### Same song, different interpretation [chroma features]
+### Same song, same interpretation [chroma features]
 
 ```{r DTW}
 sinatra <-
