@@ -19,19 +19,19 @@ library(plotly)
 
 ### Made Buble the genre more danceable? 
 
-```{r scatterplot, results=FALSE}
+```{r scatterplot}
 jazz <- get_playlist_audio_features("", "6W4qNJv2ViwlCElxMIK24H")
 MB <- get_playlist_audio_features("", "37i9dQZF1DZ06evO0WqnZe")
 FS <- get_playlist_audio_features("", "37i9dQZF1DZ06evO102dNu")
 combined <- rbind(MB, FS)
-head(combined)
 
-ggplot(combined, aes(x=valence, y=danceability, color=playlist_name)) +
-  geom_point(alpha=0.7) +
+scatter <- ggplot(combined, aes(x=valence, y=danceability, color=playlist_name)) +
+  geom_point() +
   expand_limits(x=0, y=0) +
-  labs(x="Valence", y="Danceability") +
-  theme(legend.position=c(0.8, 0.2))
+  labs(x="Valence", y="Danceability")
 
+ggplotly(scatter) %>%
+  layout(legend = list(x=0.7, y=0.1))
 ```
 
 ***
@@ -72,11 +72,15 @@ compmus_long_distance(
   ) +
   geom_tile() +
   coord_equal() +
-  labs(x = "Sinatra", y = "Buble", title = "Fly me to the moon") +
+  labs(x = "Sinatra", y = "Buble", title = "'Fly me to the moon' by two artits") +
   theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5)) +
   scale_fill_viridis_c(guide = NULL)
 ```
 
+***
+
+I really tried to make this plot interactive but my computer would literally crash.
 
 ### Conclusion
 
