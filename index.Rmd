@@ -159,7 +159,7 @@ combined <- rbind(MB, FS)
 
 scatter <- ggplot(combined, aes(x=valence, y=danceability, color=playlist_name)) +
   geom_point() +
-  geom_smooth(se=FALSE) +
+  geom_smooth(se=FALSE, linewidth = 0.5) +
   expand_limits(x=0, y=0) +
   labs(x="Valence", y="Danceability")
 
