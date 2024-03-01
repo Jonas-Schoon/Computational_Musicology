@@ -134,7 +134,9 @@ dennis |>
 
 ***
 
-Interesting to see the that the two iterations of this song have different places of being different compared to itself
+Interesting to see the that the three iterations of this song have different places of being different compared to itself.
+
+I'm going to try and improve the layout of these 3 plots in the future. Because even I can see right now this is design wise horrible. 
 
 
 ### Desciption of Corpus
