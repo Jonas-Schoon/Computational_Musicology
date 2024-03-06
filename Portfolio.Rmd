@@ -17,12 +17,14 @@ library(usethis)
 library(spotifyr)
 library(compmus)
 library(plotly)
+library(gridExtra)
+library(cowplot)
 ```
 
 Did buble make the genre more danceable?
 =====================================
 
-Column {data-width=1000}
+Column {data-width=600}
 -----------------------------------------------------------------------
 
 ### First visualisation
@@ -44,7 +46,7 @@ ggplotly(scatter) %>%
   layout(legend = list(x=0.7, y=0.1))
 ```
 
-Inputs {.sidebar}
+Column {.sidebar data-width=400}
 -----------------------------------------------------------------------
 I have made a scatterplot with on the x axis all the valence values of the tracks that are present in the "This is Frank Sinatra" and "This is Micheal Buble" playlists. On the y axis i have plotted al the danceability values of the same tracks. For the color of the dots I have used the album of the artist who sang the song. This makes it clear which dot belongs to which artist. 
 
@@ -55,13 +57,18 @@ I think this plot is interesting because it is actually in line with what I thou
 Same song, same interpretation
 =====================================
 
-Inputs {.sidebar}
+Column {.sidebar data-width=400}
 -----------------------------------------------------------------------
 this is the description
 
-Column
+
+
+Column {data-width=600}
 -----------------------------------------------------------------------
-```{r DTW}
+
+### same song and same performance
+
+```{r DTW, fig.width=20, fig.height=12}
 sinatra <-
   get_tidy_audio_analysis("7FXj7Qg3YorUxdrzvrcY25") |>
   select(segments) |>
@@ -93,7 +100,7 @@ compmus_long_distance(
   coord_equal() +
   labs(x = "Sinatra", y = "Buble", title = "'Fly me to the moon' by two artits") +
   theme_minimal() +
-  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(plot.title = element_text(hjust = 0.5, size=25), axis.title = element_text(size=20)) +
   scale_fill_viridis_c(guide = NULL)
 ```
 
@@ -101,11 +108,11 @@ Self similar but not the same [chroma and Timbre]
 =====================================
 
 ```{r data self_similarity}
-sinatra <-
+sinatra_ss <-
   get_tidy_audio_analysis("4FmCUATNIarCQh72JYdvnm") |> # Change URI.
-  compmus_align(bars, segments) |>                     # Change `bars`
-  select(bars) |>                                      #   in all three
-  unnest(bars) |>                                      #   of these lines.
+  compmus_align(sections, segments) |>                     # Change `bars`
+  select(sections) |>                                      #   in all three
+  unnest(sections) |>                                      #   of these lines.
   mutate(
     pitches =
       map(segments,
@@ -121,11 +128,11 @@ sinatra <-
       )
   )
 
-buble <-
+buble_ss <-
   get_tidy_audio_analysis("7wgYqjzA3qJLpyz89IlVPA") |> # Change URI.
-  compmus_align(bars, segments) |>                     # Change `bars`
-  select(bars) |>                                      #   in all three
-  unnest(bars) |>                                      #   of these lines.
+  compmus_align(sections, segments) |>                     # Change `bars`
+  select(sections) |>                                      #   in all three
+  unnest(sections) |>                                      #   of these lines.
   mutate(
     pitches =
       map(segments,
@@ -141,11 +148,11 @@ buble <-
       )
   )
 
-dennis <-
+dennis_ss <-
   get_tidy_audio_analysis("2Eq65QUisMmXt5StcQCMij") |> # Change URI.
-  compmus_align(bars, segments) |>                     # Change `bars`
-  select(bars) |>                                      #   in all three
-  unnest(bars) |>                                      #   of these lines.
+  compmus_align(sections, segments) |>                     # Change `bars`
+  select(sections) |>                                      #   in all three
+  unnest(sections) |>                                      #   of these lines.
   mutate(
     pitches =
       map(segments,
@@ -162,7 +169,7 @@ dennis <-
   )
 ```
 
-Inputs {.sidebar}
+Column {.sidebar data-width=300}
 -----------------------------------------------------------------------
 this is the description
 
@@ -170,8 +177,25 @@ Column {.tabset}
 -----------------------------------------------------------------------
 
 ### Sinatra
-```{r}
-sinatra |>
+
+```{r, fig.height=4, fig.width=5}
+sinatra_ss_plot1 <- sinatra_ss |>
+  compmus_gather_timbre() |>
+  ggplot(
+    aes(
+      x = start + duration / 2,
+      width = duration,
+      y = basis,
+      fill = value
+    )
+  ) +
+  geom_tile() +
+  labs(x = "Time (s)", y = NULL, fill = "Magnitude", title="Cepstogram - That's Life") +
+  scale_fill_viridis_c() +                              
+  theme_classic() +
+  theme(plot.title = element_text( size=20))
+
+sinatra_ss_plot2 <- sinatra_ss |>
   compmus_self_similarity(timbre, "cosine") |> 
   ggplot(
     aes(
@@ -186,12 +210,34 @@ sinatra |>
   coord_fixed() +
   scale_fill_viridis_c(guide = "none") +
   theme_classic() +
-  labs(x = "", y = "", title = "Sinatra - That's life" )
+  labs(x = "", y = "", title = "Self-Similarity Matrix - That's Life") +
+  theme(plot.title = element_text( size=20))
+```
+
+```{r, fig.height = 7, fig.width=15}
+plot_grid(sinatra_ss_plot1, sinatra_ss_plot2, ncol=2, nrow=1)
 ```
 
 ### Buble
+
 ```{r}
-buble |>
+buble_ss_plot1 <- buble_ss |>
+  compmus_gather_timbre() |>
+  ggplot(
+    aes(
+      x = start + duration / 2,
+      width = duration,
+      y = basis,
+      fill = value
+    )
+  ) +
+  geom_tile() +
+  labs(x = "Time (s)", y = NULL, fill = "Magnitude", title="Cepstogram - That's Life") +
+  scale_fill_viridis_c() +                              
+  theme_classic() +
+  theme(plot.title = element_text( size=20))
+
+buble_ss_plot2 <- buble_ss |>
   compmus_self_similarity(timbre, "cosine") |> 
   ggplot(
     aes(
@@ -206,12 +252,34 @@ buble |>
   coord_fixed() +
   scale_fill_viridis_c(guide = "none") +
   theme_classic() +
-  labs(x = "", y = "", title = "Buble - That's life")
+  labs(x = "", y = "", title = "Self-Similarity Matrix - That's Life") +
+  theme(plot.title = element_text( size=20))
 ```
+
+```{r, fig.height = 7, fig.width=15}
+plot_grid(buble_ss_plot1, buble_ss_plot2, ncol=2, nrow=1)
+```
+
 
 ### van Aarsen
 ```{r, self-similarity}
-dennis |>
+dennis_ss_plot1 <- dennis_ss |>
+  compmus_gather_timbre() |>
+  ggplot(
+    aes(
+      x = start + duration / 2,
+      width = duration,
+      y = basis,
+      fill = value
+    )
+  ) +
+  geom_tile() +
+  labs(x = "Time (s)", y = NULL, fill = "Magnitude", title="Cepstogram - That's Life") +
+  scale_fill_viridis_c() +                              
+  theme_classic() +
+  theme(plot.title = element_text( size=20))
+
+dennis_ss_plot2 <- dennis_ss |>
   compmus_self_similarity(timbre, "cosine") |> 
   ggplot(
     aes(
@@ -226,7 +294,12 @@ dennis |>
   coord_fixed() +
   scale_fill_viridis_c(guide = "none") +
   theme_classic() +
-  labs(x = "", y = "", title = "van Aarsen - That's life")
+  labs(x = "", y = "", title = "Self-Similarity Matrix - That's Life") +
+  theme(plot.title = element_text( size=20))
+```
+
+```{r, fig.height = 7, fig.width=15}
+plot_grid(dennis_ss_plot1, dennis_ss_plot2, ncol=2, nrow=1)
 ```
 
 
