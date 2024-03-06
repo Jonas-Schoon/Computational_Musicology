@@ -4,11 +4,10 @@ author: "Jonas Schoonhoven"
 date: "`r Sys.Date()`"
 output: 
   flexdashboard::flex_dashboard:
-      stroyboard: true
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 ```
 
 ## R Markdown
@@ -21,24 +20,21 @@ library(spotifyr)
 
 ## First visualisation
 
-```{r}
+```{r, results= FALSE, echo = FALSE}
 # import of corpus
 jazz <- get_playlist_audio_features("", "6W4qNJv2ViwlCElxMIK24H")
 MB <- get_playlist_audio_features("", "37i9dQZF1DZ06evO0WqnZe")
 FS <- get_playlist_audio_features("", "37i9dQZF1DZ06evO102dNu")
 combined <- rbind(MB, FS)
 head(combined)
-```
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
 ggplot(combined, aes(x=valence, y=danceability, color=playlist_name)) +
   geom_point(alpha=0.7) +
   expand_limits(x=0, y=0) +
   labs(x="Valence", y="Danceability") +
   theme(legend.position=c(0.8, 0.2))
-  
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+
