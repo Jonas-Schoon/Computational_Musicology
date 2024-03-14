@@ -21,6 +21,43 @@ library(gridExtra)
 library(cowplot)
 ```
 
+Tempogram
+=====================================
+
+Column {data-width=600}
+-----------------------------------------------------------------------
+
+###  Tempo adjustments
+
+```{r songs tempograms}
+margerita <- get_tidy_audio_analysis("6TFUhEcEsqGVMZeZtAeUzN")
+sway <- get_tidy_audio_analysis("2ajUl8lBLAXOXNpG4NEPMz")
+```
+
+```{r tempograms}
+sway |>
+  tempogram(window_size = 8, hop_size = 1, cyclic = FALSE) |>
+  ggplot(aes(x = time, y = bpm, fill = power)) +
+  geom_raster() +
+  scale_fill_viridis_c(guide = "none") +
+  labs(x = "Time (s)", y = "Tempo (BPM)") +
+  theme_classic()
+
+margerita |>
+  tempogram(window_size = 8, hop_size = 1, cyclic = FALSE) |>
+  ggplot(aes(x = time, y = bpm, fill = power)) +
+  geom_raster() +
+  scale_fill_viridis_c(guide = "none") +
+  labs(x = "Time (s)", y = "Tempo (BPM)") +
+  theme_classic()
+```
+
+Column {.sidebar data-width=400}
+-----------------------------------------------------------------------
+this is the description
+
+
+
 Corpus {data-orientation=rows}
 =====================================
 
