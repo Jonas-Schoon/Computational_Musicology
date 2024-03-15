@@ -160,8 +160,16 @@ Same songs
 
 Column {.sidebar data-width=400}
 -----------------------------------------------------------------------
-this is the description
+On this next tab on the right I used a technique called Dynamic Time Warping (DTW)
+to show how buble made cover of the well known classic of a song "Fly me to the moon"
 
+When you look closely to the plot there is a dark diagonal line through the plot. 
+I admit it is not very visible but there really is one. By this line we can see how similar the 
+two songs really are. For explanation, a very straight line correlates to a close similarity between the songs. 
+The same for the opposite. A very skewed line represents many differences between the songs. 
+
+Because in this plot on the right we can see that the line is mostly straight with some exceptions here and there.
+For example around 80 seconds into te song we can see that the line skewes a little bit upwards, which indicates that the version of Buble is a tiny bit slower when compared to the original of Sinatra. Overall we can conclude that Buble does a good job to stay within the same structures of the original pieces during his covers. 
 
 
 Column {data-width=600}
@@ -205,10 +213,9 @@ compmus_long_distance(
   scale_fill_viridis_c(guide = NULL)
 ```
 
-Self similarity
+Cepstrograms
 =====================================
-
-```{r data self_similarity}
+```{r data ss and cepstogram}
 sinatra_ss <-
   get_tidy_audio_analysis("4FmCUATNIarCQh72JYdvnm") |> # Change URI.
   compmus_align(sections, segments) |>                     # Change `bars`
@@ -270,17 +277,24 @@ dennis_ss <-
   )
 ```
 
-Column {.sidebar data-width=300}
------------------------------------------------------------------------
-this is the description
+```{r  cepstogram}
+sinatra_ss |>
+ compmus_gather_timbre() |>
+ ggplot(
+   aes(
+     x = start + duration / 2,
+     width = duration,
+     y = basis,
+     fill = value
+   )
+ ) +
+ geom_tile() +
+ labs(x = "Time (s)", y = NULL, fill = "Magnitude", title="Cepstogram - That's Life") +
+ scale_fill_viridis_c() +
+ theme_classic() +
+ theme(plot.title = element_text( size=20))
 
-Column {.tabset}
------------------------------------------------------------------------
-
-### Sinatra
-
-```{r, fig.height=4, fig.width=5}
-sinatra_ss_plot1 <- sinatra_ss |>
+buble_ss |>
   compmus_gather_timbre() |>
   ggplot(
     aes(
@@ -292,8 +306,65 @@ sinatra_ss_plot1 <- sinatra_ss |>
   ) +
   geom_tile() +
   labs(x = "Time (s)", y = NULL, fill = "Magnitude", title="Cepstogram - That's Life") +
-  scale_fill_viridis_c() +                              
+  scale_fill_viridis_c() +
   theme_classic() +
+  theme(plot.title = element_text( size=20))
+
+dennis_ss |>
+  compmus_gather_timbre() |>
+  ggplot(
+    aes(
+      x = start + duration / 2,
+      width = duration,
+      y = basis,
+      fill = value
+    )
+  ) +
+  geom_tile() +
+  labs(x = "Time (s)", y = NULL, fill = "Magnitude", title="Cepstogram - That's Life") +
+  scale_fill_viridis_c() +
+  theme_classic() +
+  theme(plot.title = element_text( size=20))
+```
+
+Self similarity
+=====================================
+
+Column {.sidebar data-width=300}
+-----------------------------------------------------------------------
+For this plot we stay with the same classic, That's life. And again we are comparing the 
+same three performances. The one of Sinatra, Buble and van Aarsen. 
+
+What I find interesting to see is that although the songs have their differences, performance wise
+and sound wise, the three iterations still follow the same structure. The song start in a low tuned style where the 
+first verse, chorus and second verse are sung. The songs are followed up by higher pitched  vocals which can be seen in the Chroma matrices. Also noticable to see is that the three performances all end with the iconic ending of "I'm gonna roll myself up in a big ball, and die" where the "die" part is very streched out. If you look on the top right of the plots they all show this part very well. 
+
+When we look at the timbre matrices of the plot we can also see some differences. Specially between the versions of 
+Buble and Sinatra. For context, Sinatra is singing the song for the most part on his own with here and there some 
+background singers. Buble on the other hand is singing some parts of the song with a whole choir behind him singing with him. You can see this especially around 20 to 100 seconds. Where the sections alternate between Buble singing on his own and the choir backing him up. This pattern repeat itself at the end of the song from around 210 seconds. The timbre matrices visiualise this difference with Sintra his performance which was more consistent throughout the song. 
+
+Column {.tabset data-width=700}
+-----------------------------------------------------------------------
+
+### Sinatra
+
+```{r, fig.height=4, fig.width=5}
+sinatra_ss_plot1 <- sinatra_ss |>
+  compmus_self_similarity(pitches, "cosine") |> 
+  ggplot(
+    aes(
+      x = xstart + xduration / 2,
+      width = xduration,
+      y = ystart + yduration / 2,
+      height = yduration,
+      fill = d
+    )
+  ) +
+  geom_tile() +
+  coord_fixed() +
+  scale_fill_viridis_c(guide = "none") +
+  theme_classic() +
+  labs(x = "", y = "", title = "Self Similarity Chroma Matrix - That's Life") +
   theme(plot.title = element_text( size=20))
 
 sinatra_ss_plot2 <- sinatra_ss |>
@@ -311,7 +382,7 @@ sinatra_ss_plot2 <- sinatra_ss |>
   coord_fixed() +
   scale_fill_viridis_c(guide = "none") +
   theme_classic() +
-  labs(x = "", y = "", title = "Self-Similarity Matrix - That's Life") +
+  labs(x = "", y = "", title = "Self Similarity Timbre Matrix - That's Life") +
   theme(plot.title = element_text( size=20))
 ```
 
@@ -319,23 +390,26 @@ sinatra_ss_plot2 <- sinatra_ss |>
 plot_grid(sinatra_ss_plot1, sinatra_ss_plot2, ncol=2, nrow=1)
 ```
 
+
 ### Buble
 
 ```{r}
 buble_ss_plot1 <- buble_ss |>
-  compmus_gather_timbre() |>
+  compmus_self_similarity(pitches, "cosine") |> 
   ggplot(
     aes(
-      x = start + duration / 2,
-      width = duration,
-      y = basis,
-      fill = value
+      x = xstart + xduration / 2,
+      width = xduration,
+      y = ystart + yduration / 2,
+      height = yduration,
+      fill = d
     )
   ) +
   geom_tile() +
-  labs(x = "Time (s)", y = NULL, fill = "Magnitude", title="Cepstogram - That's Life") +
-  scale_fill_viridis_c() +                              
+  coord_fixed() +
+  scale_fill_viridis_c(guide = "none") +
   theme_classic() +
+  labs(x = "", y = "", title = "Self Similarity Chroma Matrix - That's Life") +
   theme(plot.title = element_text( size=20))
 
 buble_ss_plot2 <- buble_ss |>
@@ -353,7 +427,7 @@ buble_ss_plot2 <- buble_ss |>
   coord_fixed() +
   scale_fill_viridis_c(guide = "none") +
   theme_classic() +
-  labs(x = "", y = "", title = "Self-Similarity Matrix - That's Life") +
+  labs(x = "", y = "", title = "Self Similarity Timbre Matrix - That's Life") +
   theme(plot.title = element_text( size=20))
 ```
 
@@ -365,19 +439,21 @@ plot_grid(buble_ss_plot1, buble_ss_plot2, ncol=2, nrow=1)
 ### van Aarsen
 ```{r, self-similarity}
 dennis_ss_plot1 <- dennis_ss |>
-  compmus_gather_timbre() |>
+  compmus_self_similarity(pitches, "cosine") |> 
   ggplot(
     aes(
-      x = start + duration / 2,
-      width = duration,
-      y = basis,
-      fill = value
+      x = xstart + xduration / 2,
+      width = xduration,
+      y = ystart + yduration / 2,
+      height = yduration,
+      fill = d
     )
   ) +
   geom_tile() +
-  labs(x = "Time (s)", y = NULL, fill = "Magnitude", title="Cepstogram - That's Life") +
-  scale_fill_viridis_c() +                              
+  coord_fixed() +
+  scale_fill_viridis_c(guide = "none") +
   theme_classic() +
+  labs(x = "", y = "", title = "Self Similarity Chroma Matrix - That's Life") +
   theme(plot.title = element_text( size=20))
 
 dennis_ss_plot2 <- dennis_ss |>
@@ -395,7 +471,7 @@ dennis_ss_plot2 <- dennis_ss |>
   coord_fixed() +
   scale_fill_viridis_c(guide = "none") +
   theme_classic() +
-  labs(x = "", y = "", title = "Self-Similarity Matrix - That's Life") +
+  labs(x = "", y = "", title = "Self Similarity Timbre Matrix - That's Life") +
   theme(plot.title = element_text( size=20))
 ```
 
@@ -406,10 +482,10 @@ plot_grid(dennis_ss_plot1, dennis_ss_plot2, ncol=2, nrow=1)
 Keygrams
 =====================================
 
-Column {.sidebar data-width=400}
+Column {.sidebar data-width=300}
 -----------------------------------------------------------------------
 
-Column {data-width=600}
+Column {data-width=700}
 -----------------------------------------------------------------------
 
 ### Keygram
@@ -515,7 +591,20 @@ buble_told <-
       )
   )
 
-buble_told |> 
+preslee_told <- 
+  get_tidy_audio_analysis("788AeYEaCvfFmuIHhb64Wn") |>
+  compmus_align(sections, segments) |>
+  select(sections) |>
+  unnest(sections) |>
+  mutate(
+    pitches =
+      map(segments,
+        compmus_summarise, pitches,
+        method = "mean", norm = "manhattan"
+      )
+  )
+
+buble_plot_key <- buble_told |> 
   compmus_match_pitch_template(
     key_templates,         # Change to chord_templates if descired
     method = "euclidean",  # Try different distance metrics
@@ -529,4 +618,23 @@ buble_told |>
   theme_minimal() +
   labs(x = "Time (s)", y = "", title="Have I told you that I love you - Buble") +
   theme(plot.title = element_text(size=20), axis.title = element_text(size=16))
+
+preslee_plot_key <- preslee_told |> 
+  compmus_match_pitch_template(
+    key_templates,         # Change to chord_templates if descired
+    method = "euclidean",  # Try different distance metrics
+    norm = "manhattan"     # Try different norms
+  ) |>
+  ggplot(
+    aes(x = start + duration / 2, width = duration, y = name, fill = d)
+  ) +
+  geom_tile() +
+  scale_fill_viridis_c(guide = "none") +
+  theme_minimal() +
+  labs(x = "Time (s)", y = "", title="Have I told you that I love you - Elvis") +
+  theme(plot.title = element_text(size=20), axis.title = element_text(size=16))
+```
+
+```{r, fig.height = 7, fig.width=15}
+plot_grid(buble_plot_key, preslee_plot_key, ncol=2, nrow=1)
 ```
