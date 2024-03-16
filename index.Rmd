@@ -484,6 +484,19 @@ Keygrams
 
 Column {.sidebar data-width=300}
 -----------------------------------------------------------------------
+For this plot I chose, in my opinion, another classic. The original song was brought in 1957
+by the one and only Elvis Preslee. What I like about this song of Elvis is that it does not
+really complement his signature Rock & Roll (-ish) style of music. The song is more 
+comparable to the style of his song: "Can't help falling in love".  
+
+When listening to the version of Elvis you can hear a very consistent use of chords being used.
+I think Spotify does a good job in representing this consistent use of chords as can be seen in
+the plot of Elvis. Most of the dark areas are around the chords: G major, E minor, C major and A minor. with some exceptions here and there. 
+
+When comparing the two versions of Elvis and Buble there are some noticeable differences. First and foremost, Buble made his iteration of the song more sensitive and more in de direction to the jazz genre in combination with a overall slower pace. With this change the chords he used and the structure of the chords is a bit different to the version of Elvis.  
+
+The difference in chords shows itself in the plot of Buble where it is very visible that the concentration of chords is heavily focused around the C major chord. Another differences are the small sections with different chords compared to the rest of the main parts. For example, around 30 to 35 seconds into the song there is the ending of the verse that's being sang in the beginning. This is performed by slowing the pace and switching to the A minor chord as can be seen in the plot. 
+
 
 Column {data-width=700}
 -----------------------------------------------------------------------
