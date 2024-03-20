@@ -28,8 +28,20 @@ Dendrogram
 =====================================
 
 ```{r}
+dendo_buble <- get_playlist_audio_features("", "0KL2gcmncp0Jl55vAtyFnm")
+dendo_sinatra <- get_playlist_audio_features("", "2jXNePRnYSiK3gichtnXOL")
+dendo_dennis <- get_playlist_audio_features("", "46H8GpnkwvyBhpdUNSyspd")
+dendo_elvis <- get_playlist_audio_features("", "0Vg6Mg3ZK9CBJ5Ztxxnz5h")
+
+full_dendo <- bind_rows(
+  dendo_buble |> mutate(category="Buble"), 
+  dendo_sinatra |> mutate(category="Sinatra"),
+  dendo_dennis |> mutate(category="van Aarsen"),
+  dendo_elvis |> mutate(category="Elvis"),
+)
+
 songs_corpus <-
-  get_playlist_audio_features("bnfcollection", "7a0AqfeDCJznyFqUXFrHeC") |>
+  full_dendo |>
   add_audio_analysis() |>
   mutate(
     segments = map2(segments, key, compmus_c_transpose),
@@ -61,13 +73,16 @@ jazz_corpus <-
       liveness +
       valence +
       tempo +
-      duration,
+      duration +
+      C + `C#|Db` + D + `D#|Eb` +
+      E + `F` + `F#|Gb` + G +
+      `G#|Ab` + A + `A#|Bb` + B,
     data = songs_corpus
   ) |>
   step_center(all_predictors()) |>
   step_scale(all_predictors()) |> 
   # step_range(all_predictors()) |> 
-  prep(songs_corpus |> mutate(track.name = str_trunc(track.name, 20))) |>
+  prep(songs_corpus |> mutate(track.name = str_c(category," - ", track.name))) |>
   juice() |>
   column_to_rownames("track.name")
 ```
