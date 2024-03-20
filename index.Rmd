@@ -48,6 +48,7 @@ sway |>
   ggplot(aes(x = loudness_max_time, y = pmax(0, delta_loudness))) +
   geom_line() +
   xlim(0, 30) +
+  ylim(0, 25) +
   theme_minimal() +
   labs(x = "Time (s)", y = "Novelty", title= "Sway - Michael Buble")
 ```
@@ -62,6 +63,7 @@ margerita |>
   ggplot(aes(x = loudness_max_time, y = pmax(0, delta_loudness))) +
   geom_line() +
   xlim(0, 30) +
+  ylim(0, 25) +
   theme_minimal() +
   labs(x = "Time (s)", y = "Novelty", title="Spicey Margerita - Michael Buble & Jason Derulo")
 ```
@@ -69,18 +71,17 @@ margerita |>
 
 Column {.sidebar data-width=400}
 -----------------------------------------------------------------------
-On this tab is visualised the novelty of two songs within the repetoire of Micheal Buble.
-What I like about this visualisation is that it shows how Buble is not afraid to 
-revelutionise its own songs into a new, more pop style context. Let me explain.
+On this tab is visualized the novelty of two songs within the repertoire of Micheal Buble.
+What I like about this visualization is that it shows how Buble is not afraid to 
+revolutionise its own songs into a new, more pop style context. Let me explain.
 
 The top plot shows the novelty of the song "Sway" which is your classic jazzy styled song of Buble and was brought out around november of 2014.
 As can be seen the novelty is not very high during any point during the song and caps at around 10
-which to me is complementary to the jazz genre. 
+which for me is complementary to the jazz genre. 
 
 The second plot show the novelty of the song "spicy Margerita" and when you listen to this song
 you realise that it is an renovation of the previously mentioned track. The same sort of sounds are used but within a 
 different context. Spicey Margerita is more modern than its previous counterpart and more of the pop genre instead of jazz. The song is more fast paced and more structurely rythmic. As a result the novelty of this song has higher spikes of around 13 and the spikes occur more often, which fits to the more modern aproach of the song. 
-
 
 
 Corpus {data-orientation=rows}
