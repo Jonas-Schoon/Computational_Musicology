@@ -13,75 +13,84 @@ knitr::opts_chunk$set(echo = FALSE)
 
 library(flexdashboard)
 library(tidyverse)
+library(tidymodels)
 library(usethis)
 library(spotifyr)
 library(compmus)
 library(plotly)
 library(gridExtra)
 library(cowplot)
+library(ggdendro)
+library(heatmaply)
 ```
 
-Novelty 
+Dendrogram
 =====================================
 
-Column {data-width=600}
------------------------------------------------------------------------
-```{r data tempograms}
-margerita <-
-  get_tidy_audio_analysis("6TFUhEcEsqGVMZeZtAeUzN") |>
-  select(segments) |>
-  unnest(segments)
+```{r}
+songs_corpus <-
+  get_playlist_audio_features("bnfcollection", "7a0AqfeDCJznyFqUXFrHeC") |>
+  add_audio_analysis() |>
+  mutate(
+    segments = map2(segments, key, compmus_c_transpose),
+    pitches =
+      map(segments,
+        compmus_summarise, pitches,
+        method = "mean", norm = "manhattan"
+      ),
+    timbre =
+      map(
+        segments,
+        compmus_summarise, timbre,
+        method = "mean"
+      )
+  ) |>
+  mutate(pitches = map(pitches, compmus_normalise, "clr")) |>
+  mutate_at(vars(pitches, timbre), map, bind_rows) |>
+  unnest(cols = c(pitches, timbre))
 
-sway <-
-  get_tidy_audio_analysis("2ajUl8lBLAXOXNpG4NEPMz") |>
-  select(segments) |>
-  unnest(segments)
+jazz_corpus <-
+  recipe(
+    track.name ~
+      danceability +
+      energy +
+      loudness +
+      speechiness +
+      acousticness +
+      instrumentalness +
+      liveness +
+      valence +
+      tempo +
+      duration,
+    data = songs_corpus
+  ) |>
+  step_center(all_predictors()) |>
+  step_scale(all_predictors()) |> 
+  # step_range(all_predictors()) |> 
+  prep(songs_corpus |> mutate(track.name = str_trunc(track.name, 20))) |>
+  juice() |>
+  column_to_rownames("track.name")
 ```
 
-###  Original Piece
-
-```{r tempograms, fig.width=15}
-sway |>
-  mutate(loudness_max_time = start + loudness_max_time) |>
-  arrange(loudness_max_time) |>
-  mutate(delta_loudness = loudness_max - lag(loudness_max)) |>
-  ggplot(aes(x = loudness_max_time, y = pmax(0, delta_loudness))) +
-  geom_line() +
-  xlim(0, 30) +
-  ylim(0, 25) +
-  theme_minimal() +
-  labs(x = "Time (s)", y = "Novelty", title= "Sway - Michael Buble")
+```{r}
+corpus_dist <- dist(jazz_corpus, method = "euclidean")
 ```
 
-### Same song in a different context
-
-```{r, fig.width=15}
-margerita |>
-  mutate(loudness_max_time = start + loudness_max_time) |>
-  arrange(loudness_max_time) |>
-  mutate(delta_loudness = loudness_max - lag(loudness_max)) |>
-  ggplot(aes(x = loudness_max_time, y = pmax(0, delta_loudness))) +
-  geom_line() +
-  xlim(0, 30) +
-  ylim(0, 25) +
-  theme_minimal() +
-  labs(x = "Time (s)", y = "Novelty", title="Spicey Margerita - Michael Buble & Jason Derulo")
+```{r}
+corpus_dist |> 
+  hclust(method = "complete") |> # Try single, average, and complete.
+  dendro_data() |>
+  ggdendrogram()
 ```
 
-
-Column {.sidebar data-width=400}
------------------------------------------------------------------------
-On this tab is visualized the novelty of two songs within the repertoire of Micheal Buble.
-What I like about this visualization is that it shows how Buble is not afraid to 
-revolutionise its own songs into a new, more pop style context. Let me explain.
-
-The top plot shows the novelty of the song "Sway" which is your classic jazzy styled song of Buble and was brought out around november of 2014.
-As can be seen the novelty is not very high during any point during the song and caps at around 10
-which for me is complementary to the jazz genre. 
-
-The second plot show the novelty of the song "spicy Margerita" and when you listen to this song
-you realise that it is an renovation of the previously mentioned track. The same sort of sounds are used but within a 
-different context. Spicey Margerita is more modern than its previous counterpart and more of the pop genre instead of jazz. The song is more fast paced and more structurely rythmic. As a result the novelty of this song has higher spikes of around 13 and the spikes occur more often, which fits to the more modern aproach of the song. 
+```{r}
+heatmaply(
+  jazz_corpus,
+  hclustfun = hclust,
+  hclust_method = "complete",  # Change for single, average, or complete linkage.
+  dist_method = "euclidean"
+)
+```
 
 
 Corpus {data-orientation=rows}
@@ -652,3 +661,66 @@ preslee_plot_key <- preslee_told |>
 ```{r, fig.height = 7, fig.width=15}
 plot_grid(buble_plot_key, preslee_plot_key, ncol=2, nrow=1)
 ```
+
+Novelty 
+=====================================
+
+Column {data-width=600}
+-----------------------------------------------------------------------
+```{r data tempograms}
+margerita <-
+  get_tidy_audio_analysis("6TFUhEcEsqGVMZeZtAeUzN") |>
+  select(segments) |>
+  unnest(segments)
+
+sway <-
+  get_tidy_audio_analysis("2ajUl8lBLAXOXNpG4NEPMz") |>
+  select(segments) |>
+  unnest(segments)
+```
+
+###  Original Piece
+
+```{r tempograms, fig.width=15}
+sway |>
+  mutate(loudness_max_time = start + loudness_max_time) |>
+  arrange(loudness_max_time) |>
+  mutate(delta_loudness = loudness_max - lag(loudness_max)) |>
+  ggplot(aes(x = loudness_max_time, y = pmax(0, delta_loudness))) +
+  geom_line() +
+  xlim(0, 30) +
+  ylim(0, 25) +
+  theme_minimal() +
+  labs(x = "Time (s)", y = "Novelty", title= "Sway - Michael Buble")
+```
+
+### Same song in a different context
+
+```{r, fig.width=15}
+margerita |>
+  mutate(loudness_max_time = start + loudness_max_time) |>
+  arrange(loudness_max_time) |>
+  mutate(delta_loudness = loudness_max - lag(loudness_max)) |>
+  ggplot(aes(x = loudness_max_time, y = pmax(0, delta_loudness))) +
+  geom_line() +
+  xlim(0, 30) +
+  ylim(0, 25) +
+  theme_minimal() +
+  labs(x = "Time (s)", y = "Novelty", title="Spicey Margerita - Michael Buble & Jason Derulo")
+```
+
+
+Column {.sidebar data-width=400}
+-----------------------------------------------------------------------
+On this tab is visualized the novelty of two songs within the repertoire of Micheal Buble.
+What I like about this visualization is that it shows how Buble is not afraid to 
+revolutionise its own songs into a new, more pop style context. Let me explain.
+
+The top plot shows the novelty of the song "Sway" which is your classic jazzy styled song of Buble and was brought out around november of 2014.
+As can be seen the novelty is not very high during any point during the song and caps at around 10
+which for me is complementary to the jazz genre. 
+
+The second plot show the novelty of the song "spicy Margerita" and when you listen to this song
+you realise that it is an renovation of the previously mentioned track. The same sort of sounds are used but within a 
+different context. Spicey Margerita is more modern than its previous counterpart and more of the pop genre instead of jazz. The song is more fast paced and more structurely rythmic. As a result the novelty of this song has higher spikes of around 13 and the spikes occur more often, which fits to the more modern aproach of the song. 
+
