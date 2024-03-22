@@ -27,6 +27,21 @@ library(heatmaply)
 Dendrogram
 =====================================
 
+Column {.sidebar data-width=300}
+-----------------------------------------------------------------------
+Over here is a dendogram of some songs within my corpus. The songs I have chosen for this dendogram consist mostly of covers of the same songs. So for example: "Fly me to the moon", "I've got you under my skin" and "That's Life". Next to the songs of covers I decided to add some songs that do not have a cover by another artist because I was curious to see what Spotify would do to those songs in conjunction with the songs that do have covers.
+
+What I find interesting about this plot is that almost non of the covers of the same song are clustered together within the first set of clusters. The only covers that I can find in the first sets formed are: "You make me feel so young" and "Lost". While the songs: "Something Stupid" and That's Life are not clustered till much later in the plot. 
+
+To me this is in line with how I interpret the repertoire of Buble and Buble as an arstist. Sometimes he just makes the song again with his warm voice as the change, while other times he finds new ways to interpret the song and put it into a different context. 
+
+
+
+Column {data-width=700}
+-----------------------------------------------------------------------
+
+### dendogram
+
 ```{r}
 dendo_buble <- get_playlist_audio_features("", "0KL2gcmncp0Jl55vAtyFnm")
 dendo_sinatra <- get_playlist_audio_features("", "2jXNePRnYSiK3gichtnXOL")
@@ -76,13 +91,15 @@ jazz_corpus <-
       duration +
       C + `C#|Db` + D + `D#|Eb` +
       E + `F` + `F#|Gb` + G +
-      `G#|Ab` + A + `A#|Bb` + B,
+      `G#|Ab` + A + `A#|Bb` + B +
+      c01 + c02 + c03 + c04 + c05 + c06 +
+      c07 + c08 + c09 + c10 + c11 + c12,
     data = songs_corpus
   ) |>
   step_center(all_predictors()) |>
   step_scale(all_predictors()) |> 
   # step_range(all_predictors()) |> 
-  prep(songs_corpus |> mutate(track.name = str_c(category," - ", track.name))) |>
+  prep(songs_corpus |> mutate(track.name = str_trunc(str_c(category," - ", track.name), 30))) |>
   juice() |>
   column_to_rownames("track.name")
 ```
@@ -99,12 +116,12 @@ corpus_dist |>
 ```
 
 ```{r}
-heatmaply(
-  jazz_corpus,
-  hclustfun = hclust,
-  hclust_method = "complete",  # Change for single, average, or complete linkage.
-  dist_method = "euclidean"
-)
+# heatmaply(
+#   jazz_corpus,
+#   hclustfun = hclust,
+#   hclust_method = "complete",  # Change for single, average, or complete linkage.
+#   dist_method = "euclidean"
+# )
 ```
 
 
@@ -680,7 +697,7 @@ plot_grid(buble_plot_key, preslee_plot_key, ncol=2, nrow=1)
 Novelty 
 =====================================
 
-Column {data-width=600}
+Column {data-width=700}
 -----------------------------------------------------------------------
 ```{r data tempograms}
 margerita <-
@@ -725,7 +742,7 @@ margerita |>
 ```
 
 
-Column {.sidebar data-width=400}
+Column {.sidebar data-width=300}
 -----------------------------------------------------------------------
 On this tab is visualized the novelty of two songs within the repertoire of Micheal Buble.
 What I like about this visualization is that it shows how Buble is not afraid to 
