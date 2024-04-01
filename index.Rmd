@@ -24,106 +24,6 @@ library(ggdendro)
 library(heatmaply)
 ```
 
-Dendrogram
-=====================================
-
-Column {.sidebar data-width=300}
------------------------------------------------------------------------
-Over here is a dendogram of some songs within my corpus. The songs I have chosen for this dendogram consist mostly of covers of the same songs. So for example: "Fly me to the moon", "I've got you under my skin" and "That's Life". Next to the songs of covers I decided to add some songs that do not have a cover by another artist because I was curious to see what Spotify would do to those songs in conjunction with the songs that do have covers.
-
-What I find interesting about this plot is that almost non of the covers of the same song are clustered together within the first set of clusters. The only covers that I can find in the first sets formed are: "You make me feel so young" and "Lost". While the songs: "Something Stupid" and That's Life are not clustered till much later in the plot. 
-
-To me this is in line with how I interpret the repertoire of Buble and Buble as an arstist. Sometimes he just makes the song again with his warm voice as the change, while other times he finds new ways to interpret the song and put it into a different context. 
-
-
-
-Column {data-width=700}
------------------------------------------------------------------------
-
-### dendogram
-
-```{r}
-dendo_buble <- get_playlist_audio_features("", "0KL2gcmncp0Jl55vAtyFnm")
-dendo_sinatra <- get_playlist_audio_features("", "2jXNePRnYSiK3gichtnXOL")
-dendo_dennis <- get_playlist_audio_features("", "46H8GpnkwvyBhpdUNSyspd")
-dendo_elvis <- get_playlist_audio_features("", "0Vg6Mg3ZK9CBJ5Ztxxnz5h")
-
-full_dendo <- bind_rows(
-  dendo_buble |> mutate(category="Buble"), 
-  dendo_sinatra |> mutate(category="Sinatra"),
-  dendo_dennis |> mutate(category="van Aarsen"),
-  dendo_elvis |> mutate(category="Elvis"),
-)
-
-songs_corpus <-
-  full_dendo |>
-  add_audio_analysis() |>
-  mutate(
-    segments = map2(segments, key, compmus_c_transpose),
-    pitches =
-      map(segments,
-        compmus_summarise, pitches,
-        method = "mean", norm = "manhattan"
-      ),
-    timbre =
-      map(
-        segments,
-        compmus_summarise, timbre,
-        method = "mean"
-      )
-  ) |>
-  mutate(pitches = map(pitches, compmus_normalise, "clr")) |>
-  mutate_at(vars(pitches, timbre), map, bind_rows) |>
-  unnest(cols = c(pitches, timbre))
-
-jazz_corpus <-
-  recipe(
-    track.name ~
-      danceability +
-      energy +
-      loudness +
-      speechiness +
-      acousticness +
-      instrumentalness +
-      liveness +
-      valence +
-      tempo +
-      duration +
-      C + `C#|Db` + D + `D#|Eb` +
-      E + `F` + `F#|Gb` + G +
-      `G#|Ab` + A + `A#|Bb` + B +
-      c01 + c02 + c03 + c04 + c05 + c06 +
-      c07 + c08 + c09 + c10 + c11 + c12,
-    data = songs_corpus
-  ) |>
-  step_center(all_predictors()) |>
-  step_scale(all_predictors()) |> 
-  # step_range(all_predictors()) |> 
-  prep(songs_corpus |> mutate(track.name = str_trunc(str_c(category," - ", track.name), 30))) |>
-  juice() |>
-  column_to_rownames("track.name")
-```
-
-```{r}
-corpus_dist <- dist(jazz_corpus, method = "euclidean")
-```
-
-```{r}
-corpus_dist |> 
-  hclust(method = "complete") |> # Try single, average, and complete.
-  dendro_data() |>
-  ggdendrogram()
-```
-
-```{r}
-# heatmaply(
-#   jazz_corpus,
-#   hclustfun = hclust,
-#   hclust_method = "complete",  # Change for single, average, or complete linkage.
-#   dist_method = "euclidean"
-# )
-```
-
 
 Corpus {data-orientation=rows}
 =====================================
@@ -153,7 +53,7 @@ Row {data-height=400}
 knitr::include_graphics("images/sinatra.png")
 ```
 
-### van Aarsen
+### van Aarssen
 ```{r, echo = F, fig.width=10, fig.height=6}
 knitr::include_graphics("images/dennis.png")
 ```
@@ -167,7 +67,7 @@ knitr::include_graphics("images/elvis.png")
 Danceability
 =====================================
 
-Column {data-width=600}
+Column {data-width=700}
 -----------------------------------------------------------------------
 
 ### Did Buble make the genre more danceable?
@@ -189,7 +89,7 @@ ggplotly(scatter) %>%
   layout(legend = list(x=0.7, y=0.1))
 ```
 
-Column {.sidebar data-width=400}
+Column {.sidebar data-width=300}
 -----------------------------------------------------------------------
 I have made a scatterplot with on the x axis all the valence values of the tracks that are present in the "This is Frank Sinatra" and "This is Micheal Buble" playlists. On the y axis i have plotted al the danceability values of the same tracks. For the color of the dots I have used the album of the artist who sang the song. This makes it clear which dot belongs to which artist. 
 
@@ -200,7 +100,7 @@ I think this plot is interesting because it is actually in line with what I thou
 Same songs
 =====================================
 
-Column {.sidebar data-width=400}
+Column {.sidebar data-width=300}
 -----------------------------------------------------------------------
 On this next tab on the right I used a technique called Dynamic Time Warping (DTW)
 to show how buble made cover of the well known classic of a song "Fly me to the moon"
@@ -214,7 +114,7 @@ Because in this plot on the right we can see that the line is mostly straight wi
 For example around 80 seconds into te song we can see that the line skewes a little bit upwards, which indicates that the version of Buble is a tiny bit slower when compared to the original of Sinatra. Overall we can conclude that Buble does a good job to stay within the same structures of the original pieces during his covers. 
 
 
-Column {data-width=600}
+Column {data-width=700}
 -----------------------------------------------------------------------
 
 ### Same song, roughly the same interpretation
@@ -319,7 +219,19 @@ dennis_ss <-
   )
 ```
 
-```{r  cepstogram}
+Column {data-width=500}
+-----------------------------------------------------------------------
+
+### description
+On this tab I chose to analyse another classic in the jazz genre. The song That's Life
+originally performed by Frank Sinatra. As you can see I have made cepstograms of 3 iterations
+of the song. Cepstrograms are used to get insights into the timbre aspects of the pieces. 
+
+If we look at the plot of Sinatra we see that there really is a constant value for timbre as interpreted by spotify for
+the piece. Which is also what I would suggest when hearing the song. The song, as being sung by Sinatra, consists mostly of Sinatra singing by himself in his classic, signature style. When we compare this to the version of Buble we see total different picture. Buble really made something new with his cover in my opinion. When we look at the plot we see that there are multiple values of timbre throughout the entire song which are prevalent. When listening to the version of Buble you can actually understand this, because there is a whole choir who is complementing Buble during his performance. This is in contrast with the other two performances of Sinatra and van Aarssen. Maybe an even more important point that is visible in the plots of Sinatra and Buble is that they are truely two entirely different performances of the same song. You get an entirely different feeling when listening to the two iterations in my experience. Finally the plot of van Aarssen looks a little bit more like the classic of Sinatra. When listening to the song you can also expect this to be roughly similar. Interesting to note is that although they are more similar, the performance of van Aarssen tends more towards the c01 value of timbre instead of the c02 value of Sinatra. This probably has to do with the fact that van Aarssen has a more softer voice than Sinatra in his iterations.   
+
+### Sinatra
+```{r Sinatra}
 sinatra_ss |>
  compmus_gather_timbre() |>
  ggplot(
@@ -335,7 +247,12 @@ sinatra_ss |>
  scale_fill_viridis_c() +
  theme_classic() +
  theme(plot.title = element_text( size=20))
+```
 
+Column {data-width=500}
+-----------------------------------------------------------------------
+### Buble
+```{r  buble}
 buble_ss |>
   compmus_gather_timbre() |>
   ggplot(
@@ -351,7 +268,10 @@ buble_ss |>
   scale_fill_viridis_c() +
   theme_classic() +
   theme(plot.title = element_text( size=20))
+```
 
+### van Aarssen
+```{r dennis}
 dennis_ss |>
   compmus_gather_timbre() |>
   ggplot(
@@ -369,13 +289,14 @@ dennis_ss |>
   theme(plot.title = element_text( size=20))
 ```
 
+
 Self similarity
 =====================================
 
 Column {.sidebar data-width=300}
 -----------------------------------------------------------------------
 For this plot we stay with the same classic, That's life. And again we are comparing the 
-same three performances. The one of Sinatra, Buble and van Aarsen. 
+same three performances. The one of Sinatra, Buble and van Aarssen. 
 
 What I find interesting to see is that although the songs have their differences, performance wise
 and sound wise, the three iterations still follow the same structure. The song start in a low tuned style where the 
@@ -478,7 +399,7 @@ plot_grid(buble_ss_plot1, buble_ss_plot2, ncol=2, nrow=1)
 ```
 
 
-### van Aarsen
+### van Aarssen
 ```{r, self-similarity}
 dennis_ss_plot1 <- dennis_ss |>
   compmus_self_similarity(pitches, "cosine") |> 
@@ -756,3 +677,134 @@ The second plot show the novelty of the song "spicy Margerita" and when you list
 you realise that it is an renovation of the previously mentioned track. The same sort of sounds are used but within a 
 different context. Spicey Margerita is more modern than its previous counterpart and more of the pop genre instead of jazz. The song is more fast paced and more structurely rythmic. As a result the novelty of this song has higher spikes of around 13 and the spikes occur more often, which fits to the more modern aproach of the song. 
 
+
+Dendrogram
+=====================================
+
+Column {.sidebar data-width=300}
+-----------------------------------------------------------------------
+Over here is a dendogram of some songs within my corpus. The songs I have chosen for this dendogram consist mostly of covers of the same songs. So for example: "Fly me to the moon", "I've got you under my skin" and "That's Life". Next to the songs of covers I decided to add some songs that do not have a cover by another artist because I was curious to see what Spotify would do to those songs in conjunction with the songs that do have covers.
+
+What I find interesting about this plot is that almost non of the covers of the same song are clustered together within the first set of clusters. The only covers that I can find in the first sets formed are: "You make me feel so young" and "Lost". While the songs: "Something Stupid" and That's Life are not clustered till much later in the plot. 
+
+To me this is in line with how I interpret the repertoire of Buble and Buble as an arstist. Sometimes he just makes the song again with his warm voice as the change, while other times he finds new ways to interpret the song and put it into a different context. 
+
+
+
+Column {data-width=700}
+-----------------------------------------------------------------------
+
+### dendogram
+
+```{r}
+dendo_buble <- get_playlist_audio_features("", "0KL2gcmncp0Jl55vAtyFnm")
+dendo_sinatra <- get_playlist_audio_features("", "2jXNePRnYSiK3gichtnXOL")
+dendo_dennis <- get_playlist_audio_features("", "46H8GpnkwvyBhpdUNSyspd")
+dendo_elvis <- get_playlist_audio_features("", "0Vg6Mg3ZK9CBJ5Ztxxnz5h")
+
+full_dendo <- bind_rows(
+  dendo_buble |> mutate(category="Buble"), 
+  dendo_sinatra |> mutate(category="Sinatra"),
+  dendo_dennis |> mutate(category="van Aarssen"),
+  dendo_elvis |> mutate(category="Elvis"),
+)
+
+songs_corpus <-
+  full_dendo |>
+  add_audio_analysis() |>
+  mutate(
+    segments = map2(segments, key, compmus_c_transpose),
+    pitches =
+      map(segments,
+        compmus_summarise, pitches,
+        method = "mean", norm = "manhattan"
+      ),
+    timbre =
+      map(
+        segments,
+        compmus_summarise, timbre,
+        method = "mean"
+      )
+  ) |>
+  mutate(pitches = map(pitches, compmus_normalise, "clr")) |>
+  mutate_at(vars(pitches, timbre), map, bind_rows) |>
+  unnest(cols = c(pitches, timbre))
+
+jazz_corpus <-
+  recipe(
+    track.name ~
+      danceability +
+      energy +
+      loudness +
+      speechiness +
+      acousticness +
+      instrumentalness +
+      liveness +
+      valence +
+      tempo +
+      duration +
+      C + `C#|Db` + D + `D#|Eb` +
+      E + `F` + `F#|Gb` + G +
+      `G#|Ab` + A + `A#|Bb` + B +
+      c01 + c02 + c03 + c04 + c05 + c06 +
+      c07 + c08 + c09 + c10 + c11 + c12,
+    data = songs_corpus
+  ) |>
+  step_center(all_predictors()) |>
+  step_scale(all_predictors()) |> 
+  # step_range(all_predictors()) |> 
+  prep(songs_corpus |> mutate(track.name = str_trunc(str_c(category," - ", track.name), 30))) |>
+  juice() |>
+  column_to_rownames("track.name")
+```
+
+```{r}
+corpus_dist <- dist(jazz_corpus, method = "euclidean")
+```
+
+```{r}
+data_for_dendro <- corpus_dist |> 
+  hclust(method = "complete") |> # Try single, average, and complete.
+  dendro_data()
+
+playlist_data_for_join <- full_dendo %>%
+  select(track.name, category) %>%
+  mutate(label = str_trunc(str_c(category," - ", track.name), 30))
+
+data_for_dendo$lables
+
+data_for_dendo$labels$label <- factor(data_for_dendro$labels$label)
+
+data_for_dendro |>
+  ggdendrogram() +
+  geom_text(data = label(data_for_dendro), aes(x, y, 
+                                   label=label, 
+                                   hjust=0, 
+                                   colour=full_dendo$category), size=3) +
+  coord_flip() + 
+  scale_y_reverse(expand=c(0.2, 0)) +
+  theme(axis.line.y=element_blank(),
+        axis.ticks.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.title.y=element_blank(),
+        panel.background=element_rect(fill="white"),
+        panel.grid=element_blank()) +
+  labs(title = "Playlist Clustering") +
+  guides(
+    colour = guide_legend(
+      title = "Category"
+    )
+  )
+```
+
+```{r}
+# heatmaply(
+#   jazz_corpus,
+#   hclustfun = hclust,
+#   hclust_method = "complete",  # Change for single, average, or complete linkage.
+#   dist_method = "euclidean"
+# )
+```
+
+Conclusion
+=====================================
