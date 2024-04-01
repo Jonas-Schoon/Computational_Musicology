@@ -689,7 +689,7 @@ What I find interesting about this plot is that almost non of the covers of the 
 
 To me this is in line with how I interpret the repertoire of Buble and Buble as an arstist. Sometimes he just makes the song again with his warm voice as the change, while other times he finds new ways to interpret the song and put it into a different context. 
 
-For clustering thi sample of songs I have used the spotify features, pitch classes and timbre features. In combination with te "complete"clustering method I got the tree u are seeing right now. 
+For clustering thi sample of songs I have used the spotify features, pitch classes and timbre features. In combination with te "complete"clustering method I got the tree you are seeing right now. 
 
 Column {data-width=700}
 -----------------------------------------------------------------------
@@ -830,7 +830,7 @@ My goal going into this project was to research if Buble his repertoire truelly 
 
 We start with the main point of the research, that is the amount of covers and if they are copy paste performances of the originall's. I happily can conclude that this is not the case. Not all the covers Buble has made throughout his career are copy paste performances. Although some songs like "I've got you under my skin" and "Something stupid" are really similar to the original, Buble has enough songs in his audiography that are, in my opinion, revelutionised or put in a different context. To give some examples, we saw at the [Novelty](https://jonas-schoon.github.io/Computational_Musicology/#novelty) tab that Buble even has a cover of his own song. But as I said, this new iteration of the song is put in a different context than its original. "Spicey Margerita" is a more modern approach where Buble also takes distance of his signature jazz style while making this song is a more pop style context. Another example is the song "Have I told you lately that I love you" which we've seen at the [Keygrams](https://jonas-schoon.github.io/Computational_Musicology/#keygramsan) tab. While the original of Elvis was a more rock styled song as can be expected of the one and only Elvis. Buble made a more sensitive approach to the song, while also taking the song closer to his signature style of singing. 
 
-
+After this research I can see say with some relief that I am still able to love Buble and his singing performances. I hope that I have given some insight in Buble and his repertoire while also giving a small peek in the other artists their songs, which may be unfamilliar to you. 
 
 
 
